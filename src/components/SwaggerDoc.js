@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Spin, Divider } from "antd";
 import { useMutation } from "react-query";
 
 import SwaggerDocInput from "./SwaggerDocInput";
-import SwaggerTable from "./SwaggerTable";
+import SwaggerTab from "./SwaggerTab";
 import { getSwaggerJsonFile } from "../services/api";
+import { useSwaggerStore } from "../store/swaggerStore";
+import { shallow } from "zustand/shallow";
 
 const SwaggerDoc = () => {
-  const [swaggerUrl, setSwaggerDocUrl] = useState("");
+  const { swaggerUrl, setSwaggerDocUrl } = useSwaggerStore((state) => {
+    return { ...state };
+  }, shallow);
 
   const handleSwaggerDocUrlChange = (event) => {
     const value = event.target.value;
@@ -15,6 +19,12 @@ const SwaggerDoc = () => {
   };
 
   const { mutate, data, isLoading, isError } = useMutation(getSwaggerJsonFile);
+
+  useEffect(() => {
+    if (swaggerUrl) {
+      handleSwaggerDocFormSubmit({ preventDefault: () => {} });
+    }
+  }, []);
 
   const handleSwaggerDocFormSubmit = (e) => {
     e.preventDefault();
@@ -37,7 +47,7 @@ const SwaggerDoc = () => {
       ) : isError ? (
         <p>Error occurred while fetching data</p>
       ) : (
-        data && <SwaggerTable swaggerData={data} />
+        data && <SwaggerTab swaggerData={data} />
       )}
     </div>
   );

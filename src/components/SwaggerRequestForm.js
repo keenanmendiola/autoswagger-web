@@ -21,6 +21,7 @@ const SwaggerRequestForm = ({
   verb,
   selectedPath,
   schemas,
+  authHeader,
 }) => {
   const [form] = Form.useForm();
   const [callResponse, setCallResponse] = useState({});
@@ -175,6 +176,7 @@ const SwaggerRequestForm = ({
       const requestBody = {
         url,
         verb,
+        headers: authHeader,
       };
       const apiResponse = await generateCode(requestBody);
       setCode(apiResponse.data.data);
